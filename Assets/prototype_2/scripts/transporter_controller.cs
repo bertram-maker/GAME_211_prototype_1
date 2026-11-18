@@ -26,13 +26,13 @@ public class transporter_controller : MonoBehaviour
             {
                 charged = false;
                 SR.color = Color.gray7;
-                play.tranport();
+                play.transport();
             }
             else
             {
                 SR.color = Color.yellow;
                 charged = true;
-                play.tranport();
+                play.transport();
             }
         }
     }
