@@ -421,16 +421,7 @@ MonoBehaviour:
   jumpForce: 9
   baseGravity: 2
   gravityCounter: 0
-  action:
-    m_Name: Action
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: 78012e88-538c-4e62-9ff1-673c31e39e4d
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings: []
-    m_Flags: 0
-    m_Priority: 0
+  isJumping: 0
   charged: 0
   SR: {fileID: 142065179}
   RB: {fileID: 229553921}
@@ -1227,7 +1218,7 @@ GameObject:
   - component: {fileID: 733696914}
   - component: {fileID: 733696913}
   m_Layer: 0
-  m_Name: transmitter
+  m_Name: reciever
   m_TagString: transmitter
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1722,7 +1713,7 @@ GameObject:
   - component: {fileID: 1661572736}
   - component: {fileID: 1661572737}
   m_Layer: 0
-  m_Name: transmitter_art
+  m_Name: reciever_art
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

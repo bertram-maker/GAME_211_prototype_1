@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
@@ -11,6 +12,7 @@ public class bplayer_script : MonoBehaviour
     public float jumpForce;
     public float baseGravity;
     public float gravityCounter;
+    public bool isJumping;
     
     //public InputAction action;
     
@@ -22,84 +24,66 @@ public class bplayer_script : MonoBehaviour
     private Vector2 velocity;
     void Start()
     {
-        charged = false;
-        SR.color = Color.gray7;
+        SetState(PlayerState.unpowered);
         RB.gravityScale = baseGravity;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //velocity.x = 0;
-        
-        /*
-        if (Keyboard.current.rightArrowKey.isPressed)
-        {
-            velocity.x = speed;
-        }
-
-        if (Keyboard.current.leftArrowKey.isPressed)
-        {
-            velocity.x = -speed;
-        }
-        */
-
-/*
-        if (Keyboard.current.spaceKey.isPressed && canJump())
-        {
-            velocity.y = jumpForce;
-        }
-        */
-        
-        //this would have been the else
-            velocity.y = RB.linearVelocity.y;
-            gravityCounter -= Time.deltaTime;
-            if (gravityCounter < 0)
-            {
-                RB.gravityScale = baseGravity;
-            }
-           
-/*
-        if (Keyboard.current.spaceKey.wasReleasedThisFrame && RB.linearVelocity.y > 0)
-        {
-            velocity.y = 0.5f;
-            RB.gravityScale = baseGravity - 0.9f;
-            gravityCounter = 0.17f;
-            
-        }
-*/
-        //Debug.Log(velocity.y);
-        //RB.linearVelocity = velocity;
+            //velocity.y = RB.linearVelocity.y;
     }
 
     public void FixedUpdate()
     {
-        //Debug.Log(velocity.y);
+        //This functions as an if statement. If the player is jumping then gravity is active (velocity.y = RB.LinearVelocityY)
+        velocity.y = isJumping ? velocity.y : RB.linearVelocityY;
         RB.linearVelocity = velocity;
+        
+        //This subtracts until gravity counter is equal to 0
+        gravityCounter = Mathf.Max(gravityCounter - Time.fixedDeltaTime, 0);
+        
+        isJumping = false;
+        /*
+        if (gravityCounter < 0.01)
+        {
+            RB.gravityScale = baseGravity;
+            isJumping = false;
+        }
+        */
+        
+        //Debug.Log(velocity.y);
     }
 
     public void OnMove(InputValue value)
     {
         velocity.x = value.Get<Vector2>().x * speed;
-        //RB.linearVelocity = velocity;
     }
 
+    //Controls jump
     public void OnJump(InputValue value)
     {
-        Debug.Log("jump");
+        //Debug.Log(value.isPressed);
         if (value.isPressed && canJump())
         {
+            Debug.Log("jump");
             velocity.y = jumpForce;
-            //gravityCounter = jumpForce;
+            isJumping = true;
         }
         else if (!value.isPressed && velocity.y > 0)
         {
-            Debug.Log("release");
-            velocity.y = 0.5f;
-            RB.gravityScale = baseGravity - 1;
+            //this controls hang time
+            velocity.y = 0;
+            //RB.gravityScale = baseGravity - 1;
             gravityCounter = 0.2f;
+            Debug.Log("hang time");
+            //isJumping = false;
         }
-        RB.linearVelocityY = velocity.y;
+        else
+        {
+            isJumping = false;
+        }
+        //RB.linearVelocityY = velocity.y;
     }
 
     public void SetState(PlayerState nextState)
@@ -123,11 +107,11 @@ public class bplayer_script : MonoBehaviour
         {
             SetState(PlayerState.powered);
         }
-        else if (other.gameObject.TryGetComponent(out transmitter_controller transmitter))
+        else if (other.gameObject.TryGetComponent(out reciever_controller reciever))
         {
             if (charged)
             {
-                transmitter.becomePowered();
+                reciever.becomePowered();
             }
             charged = false;
             SR.color = Color.gray7;
